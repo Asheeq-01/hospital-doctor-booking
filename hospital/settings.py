@@ -2,25 +2,32 @@ from pathlib import Path
 import os
 import dj_database_url
 
+# ---------------------------------------------------------------------
+# BASE DIRECTORY
+# ---------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
+
+# ---------------------------------------------------------------------
+# SECURITY
+# ---------------------------------------------------------------------
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
-    "django-insecure-(ul+@10m@b8wl1(%0*=_t^+i9klcy%q#^%jeq!tlefwn@whq3d"
+    "django-insecure-(ul+@10m@b8wl1(%0*=_t^+i9klcy%q#^%jeq!tlefwn@whq3d",
 )
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-# ✅ Add your Render domain when live
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "hospital-doctor-booking.onrender.com",  # ← replace this with your actual Render domain
+    "hospital-doctor-booking.onrender.com",  # ✅ your live Render domain
 ]
 
-# Application definition
+
+# ---------------------------------------------------------------------
+# APPLICATIONS
+# ---------------------------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -28,16 +35,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app1',
+
+    # Third-party apps
     'crispy_forms',
     'crispy_bootstrap5',
+
+    # Local apps
+    'app1',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
+
+# ---------------------------------------------------------------------
+# MIDDLEWARE
+# ---------------------------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ required for static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ must come right after SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -46,8 +61,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'hospital.urls'
 
+# ---------------------------------------------------------------------
+# URLS & WSGI
+# ---------------------------------------------------------------------
+ROOT_URLCONF = 'hospital.urls'
+WSGI_APPLICATION = 'hospital.wsgi.application'
+
+
+# ---------------------------------------------------------------------
+# TEMPLATES
+# ---------------------------------------------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -55,18 +79,20 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'app1.context_processor.first_department',
+                'app1.context_processor.first_department',  # ✅ your custom context processor
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'hospital.wsgi.application'
 
-# ✅ Database
+# ---------------------------------------------------------------------
+# DATABASE
+# ---------------------------------------------------------------------
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
@@ -74,7 +100,10 @@ DATABASES = {
     )
 }
 
-# Password validation
+
+# ---------------------------------------------------------------------
+# PASSWORD VALIDATION
+# ---------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
@@ -82,14 +111,28 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
 
+
+# ---------------------------------------------------------------------
+# INTERNATIONALIZATION
+# ---------------------------------------------------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# ✅ Static Files (For Render)
+
+# ---------------------------------------------------------------------
+# STATIC FILES (CSS, JS, IMAGES)
+# ---------------------------------------------------------------------
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else []
+
+# ✅ WhiteNoise setup for static files on Render
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
+# ---------------------------------------------------------------------
+# DEFAULT PRIMARY KEY FIELD TYPE
+# ---------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
