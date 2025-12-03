@@ -1,0 +1,26 @@
+{% extends "patient/base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3>Department: {{ department.name }}</h3>
+  <hr>
+  {% if doctors %}
+    <div class="row">
+      {% for doctor in doctors %}
+      <div class="col-md-4 mb-3">
+        <div class="card p-3 shadow-sm h-100">
+          <h5>👨‍⚕️ {{ doctor.name }}</h5>
+          <p class="mb-1"><strong>Age:</strong> {{ doctor.age }}</p>
+          <p class="mb-3"><strong>Gender:</strong> {{ doctor.gender }}</p>
+          <a href="{% url 'book-appointment' doctor.id %}" class="btn btn-sm btn-outline-info">
+            Book Appointment
+        </a>
+        
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No doctors available in this department.</p>
+  {% endif %}
+</div>
+{% endblock %}

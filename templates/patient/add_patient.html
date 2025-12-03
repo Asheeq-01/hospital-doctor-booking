@@ -1,0 +1,16 @@
+{% extends "patient/base.html" %}
+{% block content %}
+
+
+<div class="border border-2 bg-info p-5 container w-50">
+    {% load crispy_forms_tags %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-primary mt-3">
+    </form>
+</div>
+
+
+{% endblock  %}
+

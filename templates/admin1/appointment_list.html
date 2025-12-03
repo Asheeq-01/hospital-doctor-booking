@@ -1,0 +1,35 @@
+{% extends 'admin1/base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h3>All Appointments</h3>
+  <table class="table table-striped mt-3">
+    <thead>
+      <tr>
+        <th>#</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in appointments %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ a.patient.name }}</td>
+        <td>{{ a.doctor.name }} ({{ a.doctor.department.name }})</td>
+        <td>{{ a.date }}</td>
+        <td>{{ a.time }}</td>
+        <td>
+          {% if a.status == 'approved' %}<span class="badge bg-success">Approved</span>
+          {% elif a.status == 'rejected' %}<span class="badge bg-danger">Rejected</span>
+          {% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}
+        </td>
+        <td>
+          <a class="btn btn-sm btn-success" href="{% url 'approve-appointment' a.id %}">Approve</a>
+          <a class="btn btn-sm btn-danger" href="{% url 'reject-appointment' a.id %}">Reject</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center text-muted">No appointments yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

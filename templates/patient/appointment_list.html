@@ -1,0 +1,45 @@
+{% extends 'patient/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4"><b>Your Appointments</b></h2>
+
+    {% if appointments %}
+    <table class="table table-bordered table-striped text-center align-middle shadow-sm">
+        <thead class="table-info">
+            <tr>
+                <th>Doctor Name</th>
+                <th>Department</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment.doctor.name }}</td>
+                <td>{{ appointment.doctor.department.name }}</td>
+                <td>{{ appointment.date }}</td>
+                <td>{{ appointment.time }}</td>
+                <td>
+                    {% if appointment.status == 'approved' %}
+                        <span class="badge bg-success">Approved</span>
+                    {% elif appointment.status == 'pending' %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif appointment.status == 'rejected' %}
+                        <span class="badge bg-danger">Rejected</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info text-center mt-4" role="alert">
+        You have no appointments yet.
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

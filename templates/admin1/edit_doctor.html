@@ -1,0 +1,15 @@
+{% extends 'admin1/base.html' %}
+
+
+{% block content %}
+<div class="col border border-2 bg-info p-5 container w-25 mt-5">
+    {% load crispy_forms_tags %}
+    <form action="" method="Post">
+      {% csrf_token %} {{ edit|crispy }}
+      <input type="submit" />
+    </form>
+  </div>
+
+
+{% endblock %}
+    

@@ -1,0 +1,72 @@
+{% extends 'patient/base.html' %}
+{% block content %}
+
+<div class="border border-2 bg-info text-center p-5 container text-white rounded shadow-sm mt-3">
+  <h1>
+    <b>
+      Hi <br />{{ user.username }} <br />
+      <span class="text-danger">Welcome to</span>
+      <span class="text-success"> International <br />Hospital</span>
+    </b>
+  </h1>
+
+  {% if user.patients.exists %}
+    <p class="text-light mt-3">
+      ✅ Profile created — You can now book appointments.
+    </p>
+  {% else %}
+    <p class="text-warning mt-3">
+      ⚠️ Please create your patient profile to start booking appointments.
+    </p>
+  {% endif %}
+</div>
+
+<style>
+  .hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .hover-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+  .btn-success:hover {
+    background-color: #1e7e34 !important;
+  }
+</style>
+
+<div class="container">
+  <h1 class="text-center mt-5"><b>Departments</b></h1>
+  <div class="row row-cols-1 row-cols-md-4 g-4 mt-3">
+    {% for i in department %}
+      <div class="col">
+        <div class="card hover-card p-4 text-center shadow-sm bg-light rounded">
+          <h4 class="fw-bold text-primary">{{ i.name }}</h4>
+
+          {% if i.doctor.count >= 4 %}
+            <h6><span class="text-success">Available Doctors: {{ i.doctor.count }}</span></h6>
+          {% elif i.doctor.count >= 2 %}
+            <h6><span class="text-warning">Available Doctors: {{ i.doctor.count }}</span></h6>
+          {% else %}
+            <h6><span class="text-danger">Available Doctors: {{ i.doctor.count }}</span></h6>
+          {% endif %}
+
+          {% if user.patients.exists %}
+            <!-- ✅ Already has a patient profile -->
+            <a href="{% url 'doctor-view-patient' i.id %}" class="btn btn-success mt-4 w-100">
+              View Doctors
+            </a>
+          {% else %}
+            <!-- ❌ No patient profile yet -->
+            <a href="{% url 'add-patient' i.id %}" class="btn btn-danger mt-4 w-100">
+              Create Profile
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center mt-4 text-muted">No departments available.</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

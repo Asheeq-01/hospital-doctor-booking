@@ -1,0 +1,23 @@
+{% extends "patient/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h3 class="mb-3 text-info">Book Appointment with Dr. {{ doctor.name }}</h3>
+        <form method="POST" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label"><strong>Select Patient:</strong></label>
+                {{ form.patient }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><strong>Reason (optional):</strong></label>
+                {{ form.reason }}
+            </div>
+            <button type="submit" class="btn btn-info text-white w-100">
+                Confirm Appointment
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

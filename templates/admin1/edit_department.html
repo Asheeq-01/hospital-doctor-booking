@@ -1,0 +1,15 @@
+{% extends 'admin1/base.html' %}
+
+
+{% block content %}
+<div class="col border border-2 bg-info p-5 container w-25 mt-5">
+    {% load crispy_forms_tags %}
+    <form action="" method="Post">
+      {% csrf_token %} {{ edit|crispy }}
+      <input type="submit" />
+    </form>
+  </div>
+  <a href="{% url 'admin-department' %}" class="btn btn-primary d-flex justify-content-center mt-5 container" style="width: 80px;">Back</a>
+
+{% endblock %}
+    
