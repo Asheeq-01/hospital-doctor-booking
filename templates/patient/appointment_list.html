@@ -1,43 +1,158 @@
 {% extends 'patient/base.html' %}
 {% block content %}
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4"><b>Your Appointments</b></h2>
+<style>
+    /* Status-specific Glow Effects */
+    .status-pill {
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-approved { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .status-pending { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+    .status-rejected { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+    /* Modern Table Styling */
+    .appointment-card {
+        background: white;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: #f8fafc;
+        color: #64748b;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        padding: 20px;
+        border: none;
+    }
+
+    .table tbody td {
+        padding: 24px 20px;
+        vertical-align: middle;
+        color: #1e293b;
+        font-weight: 500;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .doctor-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .doc-initials {
+        width: 40px;
+        height: 40px;
+        background: #e0f2fe;
+        color: #0369a1;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+    }
+
+    .stat-box {
+        background: white;
+        padding: 20px;
+        border-radius: 16px;
+        border-left: 4px solid #0d6efd;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="row mb-5">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-dark mb-1">Appointment History</h2>
+            <p class="text-muted">Track and manage your medical consultations.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="stat-box d-inline-block text-start">
+                <span class="text-muted small fw-bold text-uppercase">Total Visits</span>
+                <h3 class="fw-bold mb-0 text-primary">{{ appointments.count }}</h3>
+            </div>
+        </div>
+    </div>
 
     {% if appointments %}
-    <table class="table table-bordered table-striped text-center align-middle shadow-sm">
-        <thead class="table-info">
-            <tr>
-                <th>Doctor Name</th>
-                <th>Department</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for appointment in appointments %}
-            <tr>
-                <td>{{ appointment.doctor.name }}</td>
-                <td>{{ appointment.doctor.department.name }}</td>
-                <td>{{ appointment.date }}</td>
-                <td>{{ appointment.time }}</td>
-                <td>
-                    {% if appointment.status == 'approved' %}
-                        <span class="badge bg-success">Approved</span>
-                    {% elif appointment.status == 'pending' %}
-                        <span class="badge bg-warning text-dark">Pending</span>
-                    {% elif appointment.status == 'rejected' %}
-                        <span class="badge bg-danger">Rejected</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="appointment-card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Specialist</th>
+                        <th>Department</th>
+                        <th>Schedule</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                    <tr>
+                        <td>
+                            <div class="doctor-meta">
+                                <div class="doc-initials">
+                                    <i class="fa-solid fa-user-md"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">Dr. {{ appointment.doctor.name }}</div>
+                                    <small class="text-muted">Consultant</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border fw-medium p-2 px-3 rounded-pill">
+                                {{ appointment.doctor.department.name }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ appointment.date }}</div>
+                            <small class="text-primary fw-medium">{{ appointment.time }}</small>
+                        </td>
+                        <td>
+                            {% if appointment.status == 'approved' %}
+                                <span class="status-pill status-approved">Approved</span>
+                            {% elif appointment.status == 'pending' %}
+                                <span class="status-pill status-pending">Pending</span>
+                            {% elif appointment.status == 'rejected' %}
+                                <span class="status-pill status-rejected">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-light rounded-circle shadow-sm">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
     {% else %}
-    <div class="alert alert-info text-center mt-4" role="alert">
-        You have no appointments yet.
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="fa-solid fa-calendar-xmark fa-4x text-light"></i>
+        </div>
+        <h4 class="fw-bold">No appointments found</h4>
+        <p class="text-muted mx-auto" style="max-width: 400px;">
+            You haven't scheduled any medical consultations yet. Browse our departments to find a specialist.
+        </p>
+        <a href="{% url 'patient-home' %}" class="btn btn-primary px-4 py-2 mt-3 fw-bold rounded-pill">
+            Book My First Appointment
+        </a>
     </div>
     {% endif %}
 </div>

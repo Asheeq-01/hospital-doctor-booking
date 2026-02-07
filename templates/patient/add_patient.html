@@ -1,16 +1,143 @@
-{% extends "patient/base.html" %}
+{% extends 'patient/base.html' %}
+{% load crispy_forms_tags %}
+
 {% block content %}
+<style>
+    /* Form Wrapper */
+    .form-wrapper {
+        max-width: 700px;
+        margin: 40px auto;
+    }
 
+    /* Elegant Card Styling */
+    .profile-card {
+        background: #ffffff;
+        border-radius: 24px;
+        border: none;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
 
-<div class="border border-2 bg-info p-5 container w-50">
-    {% load crispy_forms_tags %}
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <input type="submit" class="btn btn-primary mt-3">
-    </form>
+    .card-header-med {
+        background: linear-gradient(135deg, #0d6efd 0%, #003d99 100%);
+        padding: 40px;
+        color: white;
+        text-align: center;
+    }
+
+    .form-body {
+        padding: 40px;
+    }
+
+    /* Crispy Form Customization */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 700 !important;
+        color: #334155 !important;
+        font-size: 0.85rem !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px !important;
+    }
+
+    /* Targeting Django/Crispy Inputs */
+    input.textinput, input.numberinput, select, textarea {
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        border: 1px solid #e2e8f0 !important;
+        background-color: #f8fafc !important;
+        transition: all 0.3s ease !important;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        background-color: #fff !important;
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1) !important;
+        outline: none !important;
+    }
+
+    /* Premium Submit Button */
+    .btn-save {
+        background: #0d6efd;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 16px;
+        font-weight: 700;
+        width: 100%;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .btn-save:hover {
+        background: #004dc7;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(13, 110, 253, 0.2);
+        color: white;
+    }
+
+    /* Section Icon */
+    .header-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 24px;
+    }
+</style>
+
+<div class="container">
+    <div class="form-wrapper">
+        <div class="card profile-card">
+            <div class="card-header-med">
+                <div class="header-icon">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <h2 class="fw-bold mb-1">Patient Profile</h2>
+                <p class="mb-0 opacity-75">Please provide your medical information to continue.</p>
+            </div>
+
+            <div class="form-body">
+                <form action="" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="alert alert-light border-0 small text-muted mb-4" style="background: #f1f5f9;">
+                        <i class="fa-solid fa-circle-info me-2 text-primary"></i>
+                        Ensure all information matches your official ID for faster appointment approval.
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            {{ form|crispy }}
+                        </div>
+                    </div>
+
+                    <div class="pt-3">
+                        <button type="submit" class="btn btn-save">
+                            <i class="fa-solid fa-cloud-arrow-up me-2"></i> Create Medical Profile
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <a href="{% url 'patient-home' %}" class="text-muted text-decoration-none small">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Cancel and return to dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4 text-muted">
+            <small><i class="fa-solid fa-shield-halved me-1"></i> Your data is encrypted and secure.</small>
+        </div>
+    </div>
 </div>
 
-
-{% endblock  %}
-
+{% endblock %}

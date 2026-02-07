@@ -1,15 +1,152 @@
 {% extends 'admin1/base.html' %}
-
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="col border border-2 bg-info p-5 container w-25 mt-5">
-    {% load crispy_forms_tags %}
-    <form action="" method="Post">
-      {% csrf_token %} {{ edit|crispy }}
-      <input type="submit" />
-    </form>
-  </div>
+<style>
+    .edit-profile-container {
+        max-width: 750px; /* Slightly wider for doctor details */
+        margin: 3rem auto;
+    }
 
+    .edit-card {
+        background: #ffffff;
+        border-radius: 24px;
+        border: none;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .edit-card-header {
+        background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+        padding: 40px;
+        color: white;
+        text-align: center;
+        position: relative;
+    }
+
+    /* Avatar Placeholder */
+    .edit-avatar-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .edit-card-body {
+        padding: 45px;
+    }
+
+    /* Form Label Styling */
+    .form-label {
+        font-weight: 700 !important;
+        color: #475569 !important;
+        font-size: 0.8rem !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px !important;
+    }
+
+    /* Custom Input Styling */
+    input.textinput, input.numberinput, select, textarea {
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        border: 1px solid #e2e8f0 !important;
+        background-color: #f8fafc !important;
+        transition: all 0.3s ease !important;
+    }
+
+    input:focus, select:focus {
+        background-color: #fff !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+    }
+
+    /* Action Buttons */
+    .btn-save-profile {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 15px;
+        font-weight: 700;
+        width: 100%;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .btn-save-profile:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+    }
+
+    .cancel-link {
+        color: #64748b;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 20px;
+        transition: 0.2s;
+    }
+
+    .cancel-link:hover {
+        color: #0f172a;
+    }
+</style>
+
+<div class="container edit-profile-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Modify Personnel</h3>
+            <p class="text-muted small">Update official doctor credentials and records.</p>
+        </div>
+        <a href="{% url 'admin-department' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+            <i class="fa-solid fa-chevron-left me-1"></i> Back to Departments
+        </a>
+    </div>
+
+    <div class="card edit-card">
+        <div class="edit-card-header">
+            <div class="edit-avatar-icon">
+                <i class="fa-solid fa-user-doctor fa-2x"></i>
+            </div>
+            <h4 class="fw-bold mb-0">Edit Doctor Profile</h4>
+            <p class="opacity-75 small">System Record ID: #DOC-{{ doctor.id|default:"001" }}</p>
+        </div>
+
+        <div class="edit-card-body">
+            <form action="" method="POST">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    {{ edit|crispy }}
+                </div>
+
+                <div class="text-center pt-2">
+                    <button type="submit" class="btn-save-profile">
+                        <i class="fa-solid fa-check-double me-2"></i> Update Doctor Record
+                    </button>
+                    
+                    <a href="{% url 'admin-department' %}" class="cancel-link">
+                        Discard Changes
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <small class="text-muted">
+            <i class="fa-solid fa-circle-info me-1"></i> 
+            Updates will be reflected in the <strong>Patient Appointment Gallery</strong> immediately.
+        </small>
+    </div>
+</div>
 
 {% endblock %}
-    

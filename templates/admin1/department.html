@@ -1,36 +1,161 @@
-{% extends 'admin1/base.html' %} {% block content %}
-<div class="row">
-  
-    <div class="col border border-2 bg-info p-5 container w-25 mx-5 h-50">
-      {% load crispy_forms_tags %}
-      <form action="" method="Post">
-        {% csrf_token %} {{ form|crispy }}
-        <input type="submit" />
-      </form>
-    </div>
-  
-  
-    <div class="col border border-2 bg-info p-5 container mx-5">
-      <table border="1" class="table table-bordered text-white">
-        <tr>
-          <th class="text-center">Department</th>
-        </tr>
+{% extends 'admin1/base.html' %} 
+{% load crispy_forms_tags %}
 
-        {% for i in view %}
-        <tr>
-          <td><h4><b>{{ i.name }}</b></h4>
-            
-            <div class="justify-content-end d-flex">
-              <a href="{% url 'add-doctor-admin' i.id%}" class="btn btn-danger me-5">Add Doctor</a>
-              <a href="{% url 'department-edit-admin' i.id%}" class="btn btn-success">edit</a>
+{% block content %}
+<style>
+    /* Section Headings */
+    .admin-title {
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: #1e293b;
+        margin-bottom: 30px;
+    }
+
+    /* Modern Side Form Card */
+    .management-card {
+        background: white;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        padding: 30px;
+    }
+
+    .form-header {
+        border-bottom: 2px solid #f1f5f9;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+    }
+
+    /* List Item Styling */
+    .dept-item {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .dept-item:hover {
+        border-color: #3b82f6;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+        transform: translateX(5px);
+    }
+
+    .dept-name {
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+        font-size: 1.15rem;
+    }
+
+    /* Action Buttons */
+    .btn-admin-add {
+        background-color: #3b82f6;
+        color: white;
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 10px 20px;
+        border: none;
+        transition: 0.3s;
+    }
+
+    .btn-admin-add:hover {
+        background-color: #2563eb;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-action-outline {
+        border: 1.5px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .btn-action-outline:hover {
+        background: #f8fafc;
+        color: #0f172a;
+        border-color: #cbd5e1;
+    }
+
+    .badge-doc-count {
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 700;
+    }
+</style>
+
+<div class="container-fluid">
+    <h2 class="admin-title"><i class="fa-solid fa-sitemap me-2 text-primary"></i>Department Management</h2>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="management-card sticky-top" style="top: 100px;">
+                <div class="form-header">
+                    <h5 class="fw-bold mb-0">Create New Department</h5>
+                    <small class="text-muted">Register a new medical specialization</small>
+                </div>
+                
+                <form action="" method="Post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form|crispy }}
+                    </div>
+                    <button type="submit" class="btn btn-admin-add w-100">
+                        <i class="fa-solid fa-plus-circle me-2"></i>Register Department
+                    </button>
+                </form>
             </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="management-card">
+                <div class="form-header d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Active Departments</h5>
+                    <span class="badge bg-soft-primary text-primary border border-primary px-3 py-2 rounded-pill small fw-bold">
+                        {{ view.count }} Total
+                    </span>
+                </div>
+
+                <div class="mt-3">
+                    {% for i in view %}
+                    <div class="dept-item">
+                        <div>
+                            <p class="dept-name">{{ i.name }}</p>
+                            <span class="badge-doc-count mt-1">
+                                <i class="fa-solid fa-user-doctor me-1"></i> Doctors: {{ i.doctor_set.count }}
+                            </span>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'add-doctor-admin' i.id %}" class="btn-action-outline text-primary border-primary border-opacity-25 bg-primary bg-opacity-10">
+                                <i class="fa-solid fa-user-plus me-1"></i> Add Doctor
+                            </a>
+                            <a href="{% url 'department-edit-admin' i.id %}" class="btn-action-outline">
+                                <i class="fa-solid fa-pen-to-square me-1"></i> Edit
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-5">
+                        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="80" style="opacity: 0.2;" class="mb-3">
+                        <p class="text-muted">No departments registered yet.</p>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </table>
+        </div>
     </div>
- 
 </div>
 
 {% endblock %}

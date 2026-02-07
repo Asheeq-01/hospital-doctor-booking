@@ -1,16 +1,141 @@
 {% extends 'base.html' %}
-
+{% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="border border-2 bg-info p-5 container w-25">
-        {% load crispy_forms_tags %}
-        <form action="" method="Post">
-            {% csrf_token %}
-            {{form|crispy}}
-            <input type="submit">
-        </form>
+<style>
+    /* Professional background with a subtle medical feel */
+    body {
+        background: radial-gradient(circle at top right, #eef2f7, #dee2e6);
+        min-height: 100vh;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
 
+    .signup-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .signup-card {
+        background: #ffffff;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .signup-header {
+        background: #ffffff;
+        padding: 40px 40px 10px 40px;
+        text-align: center;
+    }
+
+    .brand-icon {
+        width: 64px;
+        height: 64px;
+        background: #e7f0ff;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px auto;
+        color: #0d6efd;
+    }
+
+    .form-body {
+        padding: 20px 40px 40px 40px;
+    }
+
+    /* Professional Crispy Form Styling */
+    .form-group label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        border-radius: 10px !important;
+        padding: 12px !important;
+        border: 1px solid #ced4da !important;
+        background-color: #fcfcfc !important;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1) !important;
+        background-color: #fff !important;
+    }
+
+    .btn-signup {
+        background: linear-gradient(135deg, #0d6efd 0%, #0052cc 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 14px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-signup:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+    }
+
+    .login-link {
+        color: #0d6efd;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    /* Help text styling */
+    .form-text {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+</style>
+
+<div class="container signup-container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-5">
+            <div class="card signup-card">
+                <div class="signup-header">
+                    <div class="brand-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                            <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                        </svg>
+                    </div>
+                    <h2 class="fw-bold text-dark">Create Account</h2>
+                    <p class="text-muted">Join our medical network today</p>
+                </div>
+
+                <div class="form-body">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            {{ form|crispy }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-signup">
+                                Register Now
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <p class="mb-0 text-muted">Already have an account? 
+                            <a href="{% url 'login' %}" class="login-link">Log In</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="text-center mt-4 text-muted small">
+                By signing up, you agree to our <b>Terms of Service</b> and <b>Privacy Policy</b>.
+            </p>
+        </div>
     </div>
-
-{% endblock  %}
-    
+</div>
+{% endblock %}

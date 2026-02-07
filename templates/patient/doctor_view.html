@@ -1,26 +1,159 @@
-{% extends "patient/base.html" %}
+{% extends 'patient/base.html' %}
 {% block content %}
+
+<style>
+    /* Section Header Styling */
+    .dept-header {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 40px;
+        border-bottom: 4px solid #0d6efd;
+    }
+
+    /* Doctor Card Design */
+    .doctor-card {
+        border: none;
+        border-radius: 20px;
+        background: #ffffff;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .doctor-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+    /* Profile Image Placeholder */
+    .doc-avatar-circle {
+        width: 100px;
+        height: 100px;
+        background: #f1f5f9;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .doctor-name {
+        color: #1e293b;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .doc-info-badge {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #64748b;
+        font-weight: 700;
+        display: block;
+    }
+
+    .info-value {
+        font-size: 0.95rem;
+        color: #334155;
+        font-weight: 600;
+    }
+
+    /* Action Button */
+    .btn-book {
+        background-color: #0d6efd;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 600;
+        transition: 0.3s;
+        width: 100%;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .btn-book:hover {
+        background-color: #003d99;
+        color: white;
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+    }
+
+    .badge-specialty {
+        background: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+        font-size: 0.75rem;
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-weight: 600;
+    }
+</style>
+
 <div class="container mt-4">
-  <h3>Department: {{ department.name }}</h3>
-  <hr>
-  {% if doctors %}
-    <div class="row">
-      {% for doctor in doctors %}
-      <div class="col-md-4 mb-3">
-        <div class="card p-3 shadow-sm h-100">
-          <h5>👨‍⚕️ {{ doctor.name }}</h5>
-          <p class="mb-1"><strong>Age:</strong> {{ doctor.age }}</p>
-          <p class="mb-3"><strong>Gender:</strong> {{ doctor.gender }}</p>
-          <a href="{% url 'book-appointment' doctor.id %}" class="btn btn-sm btn-outline-info">
-            Book Appointment
-        </a>
-        
+    <div class="dept-header d-flex align-items-center justify-content-between">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{% url 'patient-home' %}" class="text-decoration-none">Departments</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ department.name }}</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-dark mb-0">Specialists in {{ department.name }}</h2>
         </div>
-      </div>
-      {% endfor %}
+        <div class="text-end d-none d-md-block">
+            <i class="fa-solid fa-user-doctor fa-3x text-light opacity-50"></i>
+        </div>
     </div>
-  {% else %}
-    <p>No doctors available in this department.</p>
-  {% endif %}
+
+    {% if doctors %}
+    <div class="row g-4">
+        {% for doctor in doctors %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card doctor-card p-4">
+                <div class="text-center">
+                    <div class="doc-avatar-circle">
+                        <i class="fa-solid fa-user-md fa-3x text-primary opacity-75"></i>
+                    </div>
+                    <span class="badge-specialty mb-2 d-inline-block">{{ department.name }} Specialist</span>
+                    <h4 class="doctor-name mb-3">Dr. {{ doctor.name }}</h4>
+                </div>
+
+                <div class="doc-info-badge d-flex justify-content-around text-center">
+                    <div>
+                        <span class="info-label">Age</span>
+                        <span class="info-value">{{ doctor.age }} yrs</span>
+                    </div>
+                    <div style="border-left: 1px solid #e2e8f0; height: 35px;"></div>
+                    <div>
+                        <span class="info-label">Gender</span>
+                        <span class="info-value">{{ doctor.gender }}</span>
+                    </div>
+                </div>
+
+                <a href="{% url 'book-appointment' doctor.id %}" class="btn-book">
+                    <i class="fa-solid fa-calendar-plus me-2"></i>Book Appointment
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 bg-white rounded-3 shadow-sm">
+        <img src="https://cdn-icons-png.flaticon.com/512/3861/3861342.png" alt="Empty" style="width: 100px; opacity: 0.5;" class="mb-4">
+        <h4 class="text-muted">No doctors currently listed</h4>
+        <p class="text-secondary">Please check another department or contact support.</p>
+        <a href="{% url 'patient-home' %}" class="btn btn-primary px-4 rounded-pill">Back to Departments</a>
+    </div>
+    {% endif %}
 </div>
+
 {% endblock %}

@@ -1,23 +1,154 @@
 {% extends "patient/base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow p-4">
-        <h3 class="mb-3 text-info">Book Appointment with Dr. {{ doctor.name }}</h3>
-        <form method="POST" novalidate>
-            {% csrf_token %}
-            <div class="mb-3">
-                <label class="form-label"><strong>Select Patient:</strong></label>
-                {{ form.patient }}
+<style>
+    .booking-container {
+        max-width: 900px;
+        margin: 2rem auto;
+    }
+
+    /* Appointment Summary Card */
+    .summary-card {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 30px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .doctor-circle {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        border: 2px solid rgba(56, 189, 248, 0.5);
+    }
+
+    /* Form Side Styling */
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #334155;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Styling Django Form Inputs */
+    select, textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 12px !important;
+        border: 1px solid #e2e8f0 !important;
+        background-color: #f8fafc !important;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+    select:focus, textarea:focus {
+        background-color: #fff !important;
+        border-color: #38bdf8 !important;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1) !important;
+    }
+
+    .btn-confirm {
+        background: #0d6efd;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 15px;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .btn-confirm:hover {
+        background: #004dc7;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(13, 110, 253, 0.2);
+    }
+
+    .info-item {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="container booking-container">
+    <div class="row g-0 shadow-lg rounded-20 overflow-hidden" style="border-radius: 20px;">
+        
+        <div class="col-lg-5">
+            <div class="summary-card">
+                <div class="doctor-circle">
+                    <i class="fa-solid fa-user-doctor fa-2x text-info"></i>
+                </div>
+                <h6 class="text-info fw-bold mb-1">Confirming Appointment with:</h6>
+                <h2 class="fw-bold mb-3">Dr. {{ doctor.name }}</h2>
+                
+                <div class="mt-4">
+                    <div class="info-item"><i class="fa-solid fa-stethoscope me-2"></i> {{ doctor.department.name }}</div>
+                    <div class="info-item"><i class="fa-solid fa-venus-mars me-2"></i> {{ doctor.gender }} Specialist</div>
+                    <div class="info-item"><i class="fa-solid fa-clock me-2"></i> Next Available Slot</div>
+                </div>
+
+                <div class="mt-auto pt-5">
+                    <p class="small opacity-50 mb-0">By confirming, you agree to the hospital's attendance policy.</p>
+                </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Reason (optional):</strong></label>
-                {{ form.reason }}
+        </div>
+
+        <div class="col-lg-7">
+            <div class="form-card h-100">
+                <div class="mb-4">
+                    <h3 class="fw-bold text-dark">Schedule Visit</h3>
+                    <p class="text-muted">Fill in the details below to finalize your booking.</p>
+                </div>
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Patient Selection</label>
+                        {{ form.patient }}
+                        <div class="form-text mt-1">Select which profile this appointment is for.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Reason for Visit (Optional)</label>
+                        {{ form.reason }}
+                        <div class="form-text mt-1">Briefly describe your symptoms or concerns.</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-confirm">
+                            <i class="fa-solid fa-check-circle me-2"></i> Complete Booking
+                        </button>
+                        <a href="{% url 'doctor-view-patient' doctor.department.id %}" class="btn btn-link text-muted mt-2 text-decoration-none small">
+                            Cancel and go back
+                        </a>
+                    </div>
+                </form>
             </div>
-            <button type="submit" class="btn btn-info text-white w-100">
-                Confirm Appointment
-            </button>
-        </form>
+        </div>
     </div>
 </div>
+
 {% endblock %}

@@ -10,6 +10,12 @@ class Signup_form(UserCreationForm):
         fields=['username','email','password1','password2']
         
         
+    def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            for field in self.fields.values():
+                field.help_text=None   
+        
+        
 class Login_form(forms.Form):
     username=forms.CharField(widget=forms.TextInput(attrs={'placeholder':'enter username'}))
     password=forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'enter password'}))

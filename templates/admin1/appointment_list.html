@@ -1,35 +1,162 @@
 {% extends 'admin1/base.html' %}
 {% block content %}
-<div class="container mt-4">
-  <h3>All Appointments</h3>
-  <table class="table table-striped mt-3">
-    <thead>
-      <tr>
-        <th>#</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for a in appointments %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ a.patient.name }}</td>
-        <td>{{ a.doctor.name }} ({{ a.doctor.department.name }})</td>
-        <td>{{ a.date }}</td>
-        <td>{{ a.time }}</td>
-        <td>
-          {% if a.status == 'approved' %}<span class="badge bg-success">Approved</span>
-          {% elif a.status == 'rejected' %}<span class="badge bg-danger">Rejected</span>
-          {% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}
-        </td>
-        <td>
-          <a class="btn btn-sm btn-success" href="{% url 'approve-appointment' a.id %}">Approve</a>
-          <a class="btn btn-sm btn-danger" href="{% url 'reject-appointment' a.id %}">Reject</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="7" class="text-center text-muted">No appointments yet.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+<style>
+    /* Status Badge Styling (Soft UI) */
+    .status-pill {
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid transparent;
+    }
+    .pill-approved { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
+    .pill-pending { background: #fef9c3; color: #854d0e; border-color: #fef08a; }
+    .pill-rejected { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+
+    /* Modern Table Container */
+    .data-card {
+        background: white;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: #f8fafc;
+        color: #64748b;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 20px;
+        border: none;
+    }
+
+    .table tbody td {
+        padding: 20px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.9rem;
+        color: #334155;
+    }
+
+    /* Action Button Styles */
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        transition: 0.2s;
+        border: none;
+    }
+    .btn-approve { background: #ecfdf5; color: #10b981; }
+    .btn-approve:hover { background: #10b981; color: white; transform: translateY(-2px); }
+    
+    .btn-reject { background: #fef2f2; color: #ef4444; }
+    .btn-reject:hover { background: #ef4444; color: white; transform: translateY(-2px); }
+
+    /* Stats Overview */
+    .stat-pill {
+        background: white;
+        padding: 15px 25px;
+        border-radius: 16px;
+        border-left: 4px solid #3b82f6;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <h2 class="fw-bold text-dark mb-1">Appointment Queue</h2>
+            <p class="text-muted mb-0">Review and moderate medical consultations</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <div class="d-flex justify-content-md-end gap-3">
+                <div class="stat-pill text-start">
+                    <small class="text-muted fw-bold d-block">TOTAL REQUESTS</small>
+                    <span class="h4 fw-bold">{{ appointments.count }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="data-card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Patient Details</th>
+                        <th>Medical Staff</th>
+                        <th>Schedule</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">System Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in appointments %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-light rounded-circle p-2 text-primary">
+                                    <i class="fa-solid fa-user-injured"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">{{ a.patient.name }}</div>
+                                    <small class="text-muted">UID: #{{ a.id }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-bold">Dr. {{ a.doctor.name }}</div>
+                            <span class="badge bg-light text-primary border-0 small">{{ a.doctor.department.name }}</span>
+                        </td>
+                        <td>
+                            <div class="fw-bold"><i class="fa-regular fa-calendar me-1"></i> {{ a.date }}</div>
+                            <small class="text-muted"><i class="fa-regular fa-clock me-1"></i> {{ a.time }}</small>
+                        </td>
+                        <td>
+                            {% if a.status == 'approved' %}
+                                <span class="status-pill pill-approved">Approved</span>
+                            {% elif a.status == 'rejected' %}
+                                <span class="status-pill pill-rejected">Rejected</span>
+                            {% else %}
+                                <span class="status-pill pill-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            {% if a.status == 'pending' %}
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{% url 'approve-appointment' a.id %}" class="btn-action btn-approve" title="Approve">
+                                    <i class="fa-solid fa-check"></i>
+                                </a>
+                                <a href="{% url 'reject-appointment' a.id %}" class="btn-action btn-reject" title="Reject">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </a>
+                            </div>
+                            {% else %}
+                                <span class="text-muted small italic">Processed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <i class="fa-solid fa-clipboard-list fa-3x text-light mb-3"></i>
+                            <p class="text-muted">The queue is currently empty.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
 {% endblock %}

@@ -1,60 +1,196 @@
-{% extends 'admin1/base.html' %}
+{% extends 'admin1/base.html' %} 
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row">
-    <div class="col">
-<h2 class="text-center mb-4">
-     <strong>{{ department.name }}</strong>
-</h2>
+<style>
+    /* Section Headers */
+    .registry-header {
+        margin-bottom: 30px;
+    }
+    
+    .dept-badge {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
 
-<div class="border border-2 bg-info p-5 container w-50">
-    {% load crispy_forms_tags %}
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <input type="submit" class="btn btn-primary mt-3">
-    </form>
-</div>
+    /* Management Cards */
+    .glass-card {
+        background: white;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        padding: 30px;
+        height: 100%;
+    }
+
+    .form-section-title {
+        font-weight: 700;
+        color: #1e293b;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Modern Table UI */
+    .staff-table thead th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 15px;
+        border: none;
+    }
+
+    .staff-table tbody td {
+        padding: 18px 15px;
+        vertical-align: middle;
+        color: #334155;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* Action Buttons */
+    .btn-edit-sm {
+        background: #e0f2fe;
+        color: #0369a1;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+    .btn-edit-sm:hover { background: #0369a1; color: white; }
+
+    .btn-remove-sm {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+    .btn-remove-sm:hover { background: #b91c1c; color: white; }
+
+    .btn-submit-med {
+        background: #0f172a;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 600;
+        width: 100%;
+        transition: 0.3s;
+    }
+    .btn-submit-med:hover { background: #334155; transform: translateY(-2px); }
+</style>
+
+<div class="container-fluid">
+    <div class="registry-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="{% url 'admin-department' %}" class="text-decoration-none">Departments</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ department.name }}</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold text-dark">Personnel Registry: <span class="text-primary">{{ department.name }}</span></h2>
     </div>
-    <div class="col">
-        <h2 class="text-center mb-4">
-            <strong>Doctors</strong>
-       </h2>
-        <div class="border border-2 bg-info p-3 container me-5">
-            <table class="table table-bordered text-white ">
-                <tr>
-                    <th>Doctor</th>
-                    <th>Age</th>
-                    <th>Gender</th>
-                    <th></th>
-                </tr>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="glass-card">
+                <div class="form-section-title">
+                    <i class="fa-solid fa-user-plus text-primary"></i>
+                    <span>Onboard Specialist</span>
+                </div>
                 
-                {% for i in de %}
-                    <tr>
-                        <td>{{i.name}}</td>
-                        <td>{{i.age}}</td>
-                        <td>{{i.gender}}</td>
-                        <td>
-                            <a href="{% url 'doctor-edit-admin' i.id %}" class="btn btn-success">Edit</a>
-                            <a href="{% url 'remove-doctor' i.id %}" class="btn btn-danger ms-5">Remove</a>
-                        </td>
-                        
-                    </tr>
-                {% endfor %}
-                    
-            </table>
-                
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form|crispy }}
+                    </div>
+                    <button type="submit" class="btn-submit-med">
+                        <i class="fa-solid fa-plus me-2"></i>Add to Department
+                    </button>
+                </form>
+            </div>
         </div>
 
+        <div class="col-lg-8">
+            <div class="glass-card">
+                <div class="form-section-title d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-address-book text-primary"></i>
+                        <span>Active Staff Roster</span>
+                    </div>
+                    <span class="dept-badge">{{ de.count }} Doctors Assigned</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table staff-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Doctor Name</th>
+                                <th>Demographics</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in de %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-circle bg-light p-2">
+                                            <i class="fa-solid fa-user-md text-secondary"></i>
+                                        </div>
+                                        <div class="fw-bold text-dark">Dr. {{ i.name }}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="text-muted small fw-bold text-uppercase">Age:</span> {{ i.age }} <br>
+                                    <span class="text-muted small fw-bold text-uppercase">Gen:</span> {{ i.gender }}
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="{% url 'doctor-edit-admin' i.id %}" class="btn-edit-sm">
+                                            <i class="fa-solid fa-pen"></i> Edit
+                                        </a>
+                                        <a href="{% url 'remove-doctor' i.id %}" class="btn-remove-sm" onclick="return confirm('Are you sure you want to remove this doctor?')">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-5 text-muted">
+                                    <i class="fa-solid fa-user-slash fa-3x mb-3 opacity-25"></i>
+                                    <p>No doctors assigned to this department yet.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <div class="mt-5">
+        <a href="{% url 'admin-department' %}" class="btn btn-outline-secondary px-4 rounded-pill fw-bold">
+            <i class="fa-solid fa-arrow-left me-2"></i>Return to Departments
+        </a>
+    </div>
 </div>
-<div class="row">
-<div class="col ">
-    <a href="{% url 'admin-department' %}" class="btn btn-primary d-flex justify-content-center mt-5 container" style="width: 80px;">Back</a>
-</div>
-</div>
-
-
 
 {% endblock %}

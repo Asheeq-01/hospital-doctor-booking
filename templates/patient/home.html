@@ -1,72 +1,145 @@
 {% extends 'patient/base.html' %}
 {% block content %}
 
-<div class="border border-2 bg-info text-center p-5 container text-white rounded shadow-sm mt-3">
-  <h1>
-    <b>
-      Hi <br />{{ user.username }} <br />
-      <span class="text-danger">Welcome to</span>
-      <span class="text-success"> International <br />Hospital</span>
-    </b>
-  </h1>
-
-  {% if user.patients.exists %}
-    <p class="text-light mt-3">
-      ✅ Profile created — You can now book appointments.
-    </p>
-  {% else %}
-    <p class="text-warning mt-3">
-      ⚠️ Please create your patient profile to start booking appointments.
-    </p>
-  {% endif %}
-</div>
-
 <style>
-  .hover-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .hover-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  }
-  .btn-success:hover {
-    background-color: #1e7e34 !important;
-  }
+    /* Hero Welcome Section */
+    .welcome-banner {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-left: 5px solid #0d6efd;
+        border-radius: 16px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .welcome-banner h1 {
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -1px;
+    }
+
+    /* Modern Department Cards */
+    .dept-card {
+        border: none;
+        border-radius: 20px;
+        background: #ffffff;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dept-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .dept-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        background: #f1f5f9;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        color: #0d6efd;
+        transition: 0.3s;
+    }
+
+    .dept-card:hover .dept-icon-wrapper {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+    /* Status Badges */
+    .doctor-count {
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 50px;
+        display: inline-block;
+    }
+
+    .count-high { background: #dcfce7; color: #15803d; }
+    .count-med { background: #fef9c3; color: #854d0e; }
+    .count-low { background: #fee2e2; color: #b91c1c; }
+
+    .btn-action {
+        border-radius: 12px;
+        padding: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
 </style>
 
-<div class="container">
-  <h1 class="text-center mt-5"><b>Departments</b></h1>
-  <div class="row row-cols-1 row-cols-md-4 g-4 mt-3">
-    {% for i in department %}
-      <div class="col">
-        <div class="card hover-card p-4 text-center shadow-sm bg-light rounded">
-          <h4 class="fw-bold text-primary">{{ i.name }}</h4>
-
-          {% if i.doctor.count >= 4 %}
-            <h6><span class="text-success">Available Doctors: {{ i.doctor.count }}</span></h6>
-          {% elif i.doctor.count >= 2 %}
-            <h6><span class="text-warning">Available Doctors: {{ i.doctor.count }}</span></h6>
-          {% else %}
-            <h6><span class="text-danger">Available Doctors: {{ i.doctor.count }}</span></h6>
-          {% endif %}
-
-          {% if user.patients.exists %}
-            <!-- ✅ Already has a patient profile -->
-            <a href="{% url 'doctor-view-patient' i.id %}" class="btn btn-success mt-4 w-100">
-              View Doctors
-            </a>
-          {% else %}
-            <!-- ❌ No patient profile yet -->
-            <a href="{% url 'add-patient' i.id %}" class="btn btn-danger mt-4 w-100">
-              Create Profile
-            </a>
-          {% endif %}
+<div class="container mt-4">
+    <div class="welcome-banner d-flex align-items-center justify-content-between">
+        <div>
+            <span class="text-primary fw-bold text-uppercase small tracking-widest">Patient Dashboard</span>
+            <h1 class="mt-2">Hello, {{ user.username }}!</h1>
+            
+            {% if user.patients.exists %}
+                <p class="text-muted mb-0">
+                    <i class="fa-solid fa-circle-check text-success me-2"></i>Your medical profile is active. Ready to book your next visit.
+                </p>
+            {% else %}
+                <p class="text-danger mb-0 fw-medium">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>Action Required: Please complete your patient profile.
+                </p>
+            {% endif %}
         </div>
-      </div>
-    {% empty %}
-      <p class="text-center mt-4 text-muted">No departments available.</p>
-    {% endfor %}
-  </div>
+        <div class="d-none d-lg-block">
+            <i class="fa-solid fa-hospital-user fa-4x text-light"></i>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h3 class="fw-bold m-0">Medical Departments</h3>
+        <span class="badge bg-dark rounded-pill">{{ department.count }} Specializations</span>
+    </div>
+
+    <div class="row g-4">
+        {% for i in department %}
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card dept-card p-4 text-center">
+                    <div class="dept-icon-wrapper">
+                        <i class="fa-solid fa-stethoscope fa-xl"></i>
+                    </div>
+                    
+                    <h5 class="fw-bold mb-1 text-dark">{{ i.name }}</h5>
+                    
+                    <div class="mb-4">
+                        {% if i.doctor.count >= 4 %}
+                            <span class="doctor-count count-high">{{ i.doctor.count }} Doctors Available</span>
+                        {% elif i.doctor.count >= 2 %}
+                            <span class="doctor-count count-med">{{ i.doctor.count }} Doctors Available</span>
+                        {% else %}
+                            <span class="doctor-count count-low">{{ i.doctor.count }} Doctors Available</span>
+                        {% endif %}
+                    </div>
+
+                    {% if user.patients.exists %}
+                        <a href="{% url 'doctor-view-patient' i.id %}" class="btn btn-outline-primary btn-action w-100">
+                            Explore Doctors
+                        </a>
+                    {% else %}
+                        <a href="{% url 'add-patient' i.id %}" class="btn btn-danger btn-action w-100">
+                            Set Up Profile
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fa-solid fa-folder-open fa-3x text-light mb-3"></i>
+                    <p class="text-muted">No medical departments are currently listed.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}
